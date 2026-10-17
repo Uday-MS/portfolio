@@ -21,13 +21,18 @@
 
     <!-- Cinematic Hero Overlay Stages -->
     <div id="hero-overlay" class="hero-overlay">
-      <!-- Stage 1 & 2: Falling Dot and Tilted Stroke -->
+      <!-- Stage 1 & 2: Falling Dot, Light Halo, Tilted Stroke, UD & AY formation -->
       <div id="hero-intro-container" class="hero-intro-container">
+        <div id="hero-light-halo" class="hero-light-halo"></div>
         <div id="hero-bar" class="hero-bar"></div>
         <div id="hero-dot" class="hero-dot"></div>
+        <div id="hero-uday-stage" class="hero-uday-stage">
+          <span id="hero-ud" class="uday-segment">UD</span>
+          <span id="hero-ay" class="uday-segment">AY</span>
+        </div>
       </div>
 
-      <!-- Stage 3, 4 & 5: Kinetic Typography (UDAY -> PORTFOLIO -> descends) -->
+      <!-- Stage 3, 4 & 5: Kinetic Typography (PORTFOLIO typing -> descends) -->
       <div id="hero-title-wrap" class="hero-title-wrap">
         <h1 id="hero-title" class="hero-title" aria-label="PORTFOLIO"></h1>
       </div>
@@ -50,15 +55,17 @@
     <!-- Main Navigation Bar -->
     <nav id="main-nav" class="main-nav">
       <a href="#hero" class="nav-logo">UDAY M.S.</a>
-      <div class="nav-links">
+      <div class="nav-links" id="nav-links">
         <a href="#hero" class="nav-link active" data-section="hero">HOME</a>
         <a href="#about" class="nav-link" data-section="about">ABOUT</a>
+        <a href="#stack" class="nav-link" data-section="stack">STACK</a>
         <a href="#capabilities" class="nav-link" data-section="capabilities">CAPABILITIES</a>
         <a href="#projects" class="nav-link" data-section="projects">PROJECTS</a>
-        <a href="#stack" class="nav-link" data-section="stack">STACK</a>
         <a href="#resume" class="nav-link" data-section="resume">RESUME</a>
         <a href="#contact" class="nav-link" data-section="contact">CONTACT</a>
+        <div id="nav-active-line" class="nav-active-line"></div>
       </div>
+      <div id="nav-scroll-line" class="nav-scroll-line"></div>
     </nav>
   </section>
 
@@ -70,12 +77,12 @@
       <div class="about-grid">
         <div class="about-left">
           <span class="section-label">ABOUT ME</span>
-          <h2 class="section-title-large"><em>Intro</em></h2>
+          <h2 class="intro-heading">Intro</h2>
         </div>
         <div class="about-right">
-          <div class="about-card">
-            <p>Hey, I'm <strong>Uday M.S.</strong> — a Computer Science Engineering student and developer interested in backend systems, AI-powered applications, and building useful software products.</p>
-            <p>I focus on designing resilient distributed architectures, end-to-end machine learning pipelines, and responsive web platforms. My work spans robust backend services with Spring Boot and FastAPI, intelligent retrieval systems with FAISS and LLMs, and real-time monitoring tools engineered for reliability and performance.</p>
+          <div class="about-card" id="about-card">
+            <p class="about-text-line">Hey, I'm <strong>Uday M.S.</strong> — a Computer Science Engineering student and developer interested in <strong>backend systems</strong>, <strong>AI-powered applications</strong>, and building useful software products.</p>
+            <p class="about-text-line">I focus on designing resilient distributed architectures, end-to-end machine learning pipelines, and responsive web platforms. My work spans robust backend services with Spring Boot and FastAPI, intelligent retrieval systems with FAISS and LLMs, and real-time monitoring tools engineered for reliability and performance.</p>
             <div class="about-meta-row">
               <div class="about-meta-item">
                 <span class="meta-label">FOCUS</span>
@@ -97,7 +104,161 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- CAPABILITIES / WHAT I CAN DO                            -->
+  <!-- TECHNOLOGY STACK                                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section id="stack" class="section stack-section">
+    <div class="section-container">
+      <div class="stack-header-row">
+        <span class="section-label">THE STACK</span>
+        <div class="stack-divider-line"></div>
+      </div>
+      
+      <div class="stack-marquee-wrapper">
+        <!-- Row 1: Core Languages & Backend (Moves Left) -->
+        <div class="stack-marquee stack-marquee-row-1">
+          <div class="stack-track">
+            <span class="stack-pill"><span class="stack-dot"></span>Java 21</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Python</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Spring Boot</span>
+            <span class="stack-pill"><span class="stack-dot"></span>FastAPI</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Flask</span>
+            <span class="stack-pill"><span class="stack-dot"></span>SQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>C</span>
+            <span class="stack-pill"><span class="stack-dot"></span>TypeScript</span>
+            <span class="stack-pill"><span class="stack-dot"></span>JavaScript</span>
+            <!-- Repeat 2 -->
+            <span class="stack-pill"><span class="stack-dot"></span>Java 21</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Python</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Spring Boot</span>
+            <span class="stack-pill"><span class="stack-dot"></span>FastAPI</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Flask</span>
+            <span class="stack-pill"><span class="stack-dot"></span>SQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>C</span>
+            <span class="stack-pill"><span class="stack-dot"></span>TypeScript</span>
+            <span class="stack-pill"><span class="stack-dot"></span>JavaScript</span>
+            <!-- Repeat 3 -->
+            <span class="stack-pill"><span class="stack-dot"></span>Java 21</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Python</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Spring Boot</span>
+            <span class="stack-pill"><span class="stack-dot"></span>FastAPI</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Flask</span>
+            <span class="stack-pill"><span class="stack-dot"></span>SQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>C</span>
+            <span class="stack-pill"><span class="stack-dot"></span>TypeScript</span>
+            <span class="stack-pill"><span class="stack-dot"></span>JavaScript</span>
+          </div>
+        </div>
+
+        <!-- Row 2: Databases, Security & Infrastructure (Moves Right) -->
+        <div class="stack-marquee stack-marquee-row-2">
+          <div class="stack-track">
+            <span class="stack-pill"><span class="stack-dot"></span>PostgreSQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>MySQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Redis</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Docker</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Git</span>
+            <span class="stack-pill"><span class="stack-dot"></span>GitHub</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Spring Security</span>
+            <span class="stack-pill"><span class="stack-dot"></span>OAuth 2.0</span>
+            <span class="stack-pill"><span class="stack-dot"></span>JWT</span>
+            <!-- Repeat 2 -->
+            <span class="stack-pill"><span class="stack-dot"></span>PostgreSQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>MySQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Redis</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Docker</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Git</span>
+            <span class="stack-pill"><span class="stack-dot"></span>GitHub</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Spring Security</span>
+            <span class="stack-pill"><span class="stack-dot"></span>OAuth 2.0</span>
+            <span class="stack-pill"><span class="stack-dot"></span>JWT</span>
+            <!-- Repeat 3 -->
+            <span class="stack-pill"><span class="stack-dot"></span>PostgreSQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>MySQL</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Redis</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Docker</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Git</span>
+            <span class="stack-pill"><span class="stack-dot"></span>GitHub</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Spring Security</span>
+            <span class="stack-pill"><span class="stack-dot"></span>OAuth 2.0</span>
+            <span class="stack-pill"><span class="stack-dot"></span>JWT</span>
+          </div>
+        </div>
+
+        <!-- Row 3: AI, Machine Learning & NLP (Moves Left) -->
+        <div class="stack-marquee stack-marquee-row-3">
+          <div class="stack-track">
+            <span class="stack-pill"><span class="stack-dot"></span>scikit-learn</span>
+            <span class="stack-pill"><span class="stack-dot"></span>TensorFlow</span>
+            <span class="stack-pill"><span class="stack-dot"></span>FAISS</span>
+            <span class="stack-pill"><span class="stack-dot"></span>RAG</span>
+            <span class="stack-pill"><span class="stack-dot"></span>NLP</span>
+            <span class="stack-pill"><span class="stack-dot"></span>PyMuPDF</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Tesseract OCR</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Google Generative AI</span>
+            <span class="stack-pill"><span class="stack-dot"></span>pandas</span>
+            <span class="stack-pill"><span class="stack-dot"></span>NumPy</span>
+            <!-- Repeat 2 -->
+            <span class="stack-pill"><span class="stack-dot"></span>scikit-learn</span>
+            <span class="stack-pill"><span class="stack-dot"></span>TensorFlow</span>
+            <span class="stack-pill"><span class="stack-dot"></span>FAISS</span>
+            <span class="stack-pill"><span class="stack-dot"></span>RAG</span>
+            <span class="stack-pill"><span class="stack-dot"></span>NLP</span>
+            <span class="stack-pill"><span class="stack-dot"></span>PyMuPDF</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Tesseract OCR</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Google Generative AI</span>
+            <span class="stack-pill"><span class="stack-dot"></span>pandas</span>
+            <span class="stack-pill"><span class="stack-dot"></span>NumPy</span>
+            <!-- Repeat 3 -->
+            <span class="stack-pill"><span class="stack-dot"></span>scikit-learn</span>
+            <span class="stack-pill"><span class="stack-dot"></span>TensorFlow</span>
+            <span class="stack-pill"><span class="stack-dot"></span>FAISS</span>
+            <span class="stack-pill"><span class="stack-dot"></span>RAG</span>
+            <span class="stack-pill"><span class="stack-dot"></span>NLP</span>
+            <span class="stack-pill"><span class="stack-dot"></span>PyMuPDF</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Tesseract OCR</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Google Generative AI</span>
+            <span class="stack-pill"><span class="stack-dot"></span>pandas</span>
+            <span class="stack-pill"><span class="stack-dot"></span>NumPy</span>
+          </div>
+        </div>
+
+        <!-- Row 4: Web Architecture & Production Tooling (Moves Right) -->
+        <div class="stack-marquee stack-marquee-row-4">
+          <div class="stack-track">
+            <span class="stack-pill"><span class="stack-dot"></span>React</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Next.js 14</span>
+            <span class="stack-pill"><span class="stack-dot"></span>REST APIs</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Flyway</span>
+            <span class="stack-pill"><span class="stack-dot"></span>SQLAlchemy</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Postman</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Render</span>
+            <span class="stack-pill"><span class="stack-dot"></span>CI/CD</span>
+            <!-- Repeat 2 -->
+            <span class="stack-pill"><span class="stack-dot"></span>React</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Next.js 14</span>
+            <span class="stack-pill"><span class="stack-dot"></span>REST APIs</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Flyway</span>
+            <span class="stack-pill"><span class="stack-dot"></span>SQLAlchemy</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Postman</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Render</span>
+            <span class="stack-pill"><span class="stack-dot"></span>CI/CD</span>
+            <!-- Repeat 3 -->
+            <span class="stack-pill"><span class="stack-dot"></span>React</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Next.js 14</span>
+            <span class="stack-pill"><span class="stack-dot"></span>REST APIs</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Flyway</span>
+            <span class="stack-pill"><span class="stack-dot"></span>SQLAlchemy</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Postman</span>
+            <span class="stack-pill"><span class="stack-dot"></span>Render</span>
+            <span class="stack-pill"><span class="stack-dot"></span>CI/CD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- CAPABILITIES / WHAT WE CAN DO                           -->
   <!-- ═══════════════════════════════════════════════════════ -->
   <section id="capabilities" class="section capabilities-section">
     <div class="section-container">
@@ -106,22 +267,22 @@
           <span class="section-label">EXPERTISE & SKILLS</span>
         </div>
         <div class="capabilities-header-right">
-          <h2 class="capabilities-title">WHAT I</h2>
+          <h2 class="capabilities-title">WHAT WE</h2>
           <h2 class="capabilities-title capabilities-title-accent">CAN DO</h2>
         </div>
       </div>
 
       <div class="capabilities-list">
-        <!-- Capability 01 -->
-        <div class="capability-item expanded" data-index="01">
-          <div class="capability-header">
+        <!-- Capability 01 (Closed by default) -->
+        <div class="capability-item" data-index="01">
+          <div class="capability-header" tabindex="0" role="button" aria-expanded="false" aria-controls="cap-body-01">
             <span class="capability-number">01</span>
             <h3 class="capability-name">AI / ML SYSTEMS & PIPELINES</h3>
             <div class="capability-toggle" aria-label="Toggle details">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"></line><polyline points="17 7 17 17 7 17"></polyline></svg>
             </div>
           </div>
-          <div class="capability-body">
+          <div class="capability-body" id="cap-body-01">
             <div class="capability-details">
               <ul>
                 <li><span class="bullet-square">■</span> Design and deploy end-to-end ML pipelines</li>
@@ -140,14 +301,14 @@
 
         <!-- Capability 02 -->
         <div class="capability-item" data-index="02">
-          <div class="capability-header">
+          <div class="capability-header" tabindex="0" role="button" aria-expanded="false" aria-controls="cap-body-02">
             <span class="capability-number">02</span>
             <h3 class="capability-name">BACKEND & API ARCHITECTURE</h3>
             <div class="capability-toggle" aria-label="Toggle details">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7l10 10M17 7v10H7"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"></line><polyline points="17 7 17 17 7 17"></polyline></svg>
             </div>
           </div>
-          <div class="capability-body">
+          <div class="capability-body" id="cap-body-02">
             <div class="capability-details">
               <ul>
                 <li><span class="bullet-square">■</span> Production REST APIs with Spring Boot 3 & Java 21</li>
@@ -166,14 +327,14 @@
 
         <!-- Capability 03 -->
         <div class="capability-item" data-index="03">
-          <div class="capability-header">
+          <div class="capability-header" tabindex="0" role="button" aria-expanded="false" aria-controls="cap-body-03">
             <span class="capability-number">03</span>
             <h3 class="capability-name">FULL-STACK WEB PLATFORMS</h3>
             <div class="capability-toggle" aria-label="Toggle details">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7l10 10M17 7v10H7"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"></line><polyline points="17 7 17 17 7 17"></polyline></svg>
             </div>
           </div>
-          <div class="capability-body">
+          <div class="capability-body" id="cap-body-03">
             <div class="capability-details">
               <ul>
                 <li><span class="bullet-square">■</span> Modern React, Next.js 14 & TypeScript frontends</li>
@@ -192,14 +353,14 @@
 
         <!-- Capability 04 -->
         <div class="capability-item" data-index="04">
-          <div class="capability-header">
+          <div class="capability-header" tabindex="0" role="button" aria-expanded="false" aria-controls="cap-body-04">
             <span class="capability-number">04</span>
             <h3 class="capability-name">INTELLIGENT DOCUMENT & DATA PROCESSING</h3>
             <div class="capability-toggle" aria-label="Toggle details">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7l10 10M17 7v10H7"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"></line><polyline points="17 7 17 17 7 17"></polyline></svg>
             </div>
           </div>
-          <div class="capability-body">
+          <div class="capability-body" id="cap-body-04">
             <div class="capability-details">
               <ul>
                 <li><span class="bullet-square">■</span> PyMuPDF & Tesseract OCR document extraction</li>
@@ -502,34 +663,8 @@
         </div>
       </div>
 
-      <!-- Project 06: Kestlow AI -->
+      <!-- Project 06: Enterprise Medical Store -->
       <div class="project-item project-item-reverse" data-project="06">
-        <div class="project-visual">
-          <div class="project-mockup mockup-coming-soon">
-            <div class="mockup-center-msg">
-              <span class="msg-tag">IN DEVELOPMENT</span>
-              <h4 class="msg-title">Kestlow AI</h4>
-              <p class="msg-desc">Project details coming soon.</p>
-            </div>
-          </div>
-        </div>
-        <div class="project-info">
-          <span class="project-number">06</span>
-          <h3 class="project-name"><span class="project-name-bold">KESTLOW</span> <em>AI</em><br/><span class="project-name-bold">STUDIO INITIATIVE</span></h3>
-          <p class="project-desc">A specialized technology initiative in active development. Architecture specifications, feature list, and verified milestones will be published once preliminary builds conclude.</p>
-          <div class="project-tech-tags">
-            <span>AI Systems</span>
-            <span>Full-Stack</span>
-            <span>Coming Soon</span>
-          </div>
-          <div class="project-links">
-            <span class="btn-outline btn-disabled">Details Coming Soon</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Project 07: Enterprise Medical Store -->
-      <div class="project-item" data-project="07">
         <div class="project-visual">
           <div class="project-mockup" id="mockup-medstore">
             <div class="mockup-browser">
@@ -565,7 +700,7 @@
           </div>
         </div>
         <div class="project-info">
-          <span class="project-number">07</span>
+          <span class="project-number">06</span>
           <h3 class="project-name"><span class="project-name-bold">ENTERPRISE</span><em> Medical</em><br/><span class="project-name-bold">STORE MANAGEMENT</span></h3>
           <p class="project-desc">A complete medical pharmacy inventory and billing management system built with Flask, Python, and MySQL. Features role-based access for admins and pharmacists, fast medicine search, automated stock decrement upon billing, sales histories, and expiry alerts.</p>
           <div class="project-tech-tags">
@@ -581,8 +716,8 @@
         </div>
       </div>
 
-      <!-- Project 08: PaperMind AI -->
-      <div class="project-item project-item-reverse" data-project="08">
+      <!-- Project 07: PaperMind AI -->
+      <div class="project-item" data-project="07">
         <div class="project-visual">
           <div class="project-mockup" id="mockup-papermind">
             <div class="mockup-browser">
@@ -611,7 +746,7 @@
           </div>
         </div>
         <div class="project-info">
-          <span class="project-number">08</span>
+          <span class="project-number">07</span>
           <h3 class="project-name"><span class="project-name-bold">PAPER</span><em>Mind</em> <span class="project-name-bold">AI</span><br/><span class="project-name-bold">RESEARCH PAPER ANALYZER</span></h3>
           <p class="project-desc">An intelligent research paper analysis platform. Ingests academic PDF files via PyMuPDF, synthesizes complex methodology and key findings using Google Generative AI, and supports comparative analysis across multiple research papers with FAISS CPU vector embeddings.</p>
           <div class="project-tech-tags">
@@ -624,86 +759,6 @@
           </div>
           <div class="project-links">
             <a href="https://github.com/Uday-MS/AI_Research_paper_exp" target="_blank" rel="noopener" class="btn-outline">GitHub Repository ↗</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- TECHNOLOGY STACK                                        -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <section id="stack" class="section stack-section">
-    <div class="section-container">
-      <span class="section-label">THE STACK</span>
-      <h2 class="section-title-large">TECHNOLOGIES <em>& Tools</em></h2>
-      
-      <div class="stack-marquee-wrapper">
-        <div class="stack-marquee">
-          <div class="stack-track">
-            <span class="stack-pill">Java 21</span>
-            <span class="stack-pill">Spring Boot</span>
-            <span class="stack-pill">Spring Security</span>
-            <span class="stack-pill">Python</span>
-            <span class="stack-pill">FastAPI</span>
-            <span class="stack-pill">Flask</span>
-            <span class="stack-pill">PostgreSQL</span>
-            <span class="stack-pill">MySQL</span>
-            <span class="stack-pill">Redis</span>
-            <span class="stack-pill">Docker</span>
-            <span class="stack-pill">TypeScript</span>
-            <span class="stack-pill">JavaScript</span>
-            <span class="stack-pill">React</span>
-            <span class="stack-pill">Next.js</span>
-            <!-- Duplicated for seamless infinite marquee -->
-            <span class="stack-pill">Java 21</span>
-            <span class="stack-pill">Spring Boot</span>
-            <span class="stack-pill">Spring Security</span>
-            <span class="stack-pill">Python</span>
-            <span class="stack-pill">FastAPI</span>
-            <span class="stack-pill">Flask</span>
-            <span class="stack-pill">PostgreSQL</span>
-            <span class="stack-pill">MySQL</span>
-            <span class="stack-pill">Redis</span>
-            <span class="stack-pill">Docker</span>
-            <span class="stack-pill">TypeScript</span>
-            <span class="stack-pill">JavaScript</span>
-            <span class="stack-pill">React</span>
-            <span class="stack-pill">Next.js</span>
-          </div>
-        </div>
-
-        <div class="stack-marquee stack-marquee-reverse">
-          <div class="stack-track">
-            <span class="stack-pill">scikit-learn</span>
-            <span class="stack-pill">FAISS</span>
-            <span class="stack-pill">pandas</span>
-            <span class="stack-pill">NumPy</span>
-            <span class="stack-pill">Google Generative AI</span>
-            <span class="stack-pill">Tesseract OCR</span>
-            <span class="stack-pill">OAuth 2.0</span>
-            <span class="stack-pill">JWT</span>
-            <span class="stack-pill">Flyway</span>
-            <span class="stack-pill">SQLAlchemy</span>
-            <span class="stack-pill">Git & GitHub</span>
-            <span class="stack-pill">Render</span>
-            <span class="stack-pill">REST APIs</span>
-            <span class="stack-pill">PyMuPDF</span>
-            <!-- Duplicated for seamless infinite marquee -->
-            <span class="stack-pill">scikit-learn</span>
-            <span class="stack-pill">FAISS</span>
-            <span class="stack-pill">pandas</span>
-            <span class="stack-pill">NumPy</span>
-            <span class="stack-pill">Google Generative AI</span>
-            <span class="stack-pill">Tesseract OCR</span>
-            <span class="stack-pill">OAuth 2.0</span>
-            <span class="stack-pill">JWT</span>
-            <span class="stack-pill">Flyway</span>
-            <span class="stack-pill">SQLAlchemy</span>
-            <span class="stack-pill">Git & GitHub</span>
-            <span class="stack-pill">Render</span>
-            <span class="stack-pill">REST APIs</span>
-            <span class="stack-pill">PyMuPDF</span>
           </div>
         </div>
       </div>
@@ -801,7 +856,12 @@
       </div>
 
       <div class="game-canvas-wrapper">
+        <div class="game-arcade-dots"><span></span><span></span><span></span></div>
         <canvas id="game-canvas" class="game-canvas"></canvas>
+        <div id="game-gameover-overlay" class="game-gameover-overlay">
+          <span class="game-out-label">OUT OF BALLS</span>
+          <button id="game-again-btn" class="game-again-btn">AGAIN</button>
+        </div>
       </div>
 
       <div class="game-controls">
@@ -822,8 +882,8 @@
         <h2 class="contact-title"><em>Get in touch</em></h2>
         <p class="contact-desc">Open for software engineering opportunities, backend development roles, AI/ML initiatives, and collaborations. Email gets the fastest response.</p>
         <div class="contact-buttons">
-          <a href="https://wa.me/919980100280" target="_blank" rel="noopener" class="btn-primary">Message on WhatsApp 💬</a>
-          <a href="mailto:msudayuday@gmail.com" class="btn-outline">Send an email ✉</a>
+          <a href="mailto:msudayuday@gmail.com" class="btn-primary">Send an email ✉</a>
+          <a href="tel:+919980100280" class="btn-outline">Call +91 9980100280 📞</a>
         </div>
       </div>
       <div class="contact-right">

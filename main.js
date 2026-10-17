@@ -12,10 +12,15 @@ const heroSection = document.getElementById('hero');
 const heroIntroContainer = document.getElementById('hero-intro-container');
 const heroDot = document.getElementById('hero-dot');
 const heroBar = document.getElementById('hero-bar');
+const heroLightHalo = document.getElementById('hero-light-halo');
+const heroUd = document.getElementById('hero-ud');
+const heroAy = document.getElementById('hero-ay');
 const heroTitleWrap = document.getElementById('hero-title-wrap');
 const heroTitle = document.getElementById('hero-title');
 const heroBottom = document.getElementById('hero-bottom');
 const mainNav = document.getElementById('main-nav');
+const navActiveLine = document.getElementById('nav-active-line');
+const navScrollLine = document.getElementById('nav-scroll-line');
 const portraitImg = document.getElementById('portrait-src');
 
 // ── State ─────────────────────────────────────────────────────
@@ -316,60 +321,30 @@ function renderWordChars(container, word, initialClass = 'entering') {
   return spans;
 }
 
-// Rapid kinetic letter scramble/morph into target word
-function morphWord(container, targetWord, durationMs = 850) {
+// Medium-speed character-by-character typing animation into target word
+function typeWord(container, targetWord, charDelayMs = 115) {
   return new Promise((resolve) => {
-    const targetLen = targetWord.length;
     container.innerHTML = '';
     const spans = [];
-
-    for (let i = 0; i < targetLen; i++) {
+    for (let i = 0; i < targetWord.length; i++) {
       const span = document.createElement('span');
-      span.className = 'char scrambling';
+      span.className = 'char entering';
       span.textContent = targetWord[i];
       container.appendChild(span);
       spans.push(span);
     }
 
-    const startTime = performance.now();
-    const staggerPerChar = durationMs / (targetLen + 3);
-
-    function scrambleFrame(now) {
-      const elapsed = now - startTime;
-      let allSettled = true;
-
-      for (let i = 0; i < targetLen; i++) {
-        const charStart = i * staggerPerChar;
-        const charDuration = 220;
-        const charProgress = (elapsed - charStart) / charDuration;
-
-        if (charProgress < 0) {
-          allSettled = false;
-          spans[i].textContent = GLYPH_CHARS[Math.floor(Math.random() * GLYPH_CHARS.length)];
-        } else if (charProgress < 1) {
-          allSettled = false;
-          spans[i].className = 'char scrambling';
-          spans[i].textContent = GLYPH_CHARS[Math.floor(Math.random() * GLYPH_CHARS.length)];
-        } else {
-          if (spans[i].textContent !== targetWord[i]) {
-            spans[i].textContent = targetWord[i];
-            spans[i].className = 'char settled';
-          }
-        }
-      }
-
-      if (allSettled && elapsed >= durationMs) {
-        for (let i = 0; i < targetLen; i++) {
-          spans[i].textContent = targetWord[i];
-          spans[i].className = 'char settled';
-        }
-        resolve();
+    let idx = 0;
+    const timer = setInterval(() => {
+      if (idx < spans.length) {
+        spans[idx].classList.remove('entering');
+        spans[idx].classList.add('settled');
+        idx++;
       } else {
-        requestAnimationFrame(scrambleFrame);
+        clearInterval(timer);
+        resolve();
       }
-    }
-
-    requestAnimationFrame(scrambleFrame);
+    }, charDelayMs);
   });
 }
 
@@ -398,46 +373,86 @@ async function runHeroSequence() {
     return;
   }
 
-  // ── Stage 1: Dot falls from above and bounces twice ────────
+  // ── Stage A: Dot falls from above and bounces twice with light spread ──
   await delay(250);
   if (heroDot) heroDot.classList.add('falling');
 
-  // Allow the 2 bounces to complete and settle (1.4s animation)
-  await delay(1450);
+  // First impact flash (at ~520ms)
+  setTimeout(() => {
+    if (heroLightHalo) {
+      heroLightHalo.classList.add('pulse');
+      setTimeout(() => heroLightHalo.classList.add('fade'), 300);
+    }
+  }, 520);
 
-  // ── Stage 2: Upper stroke emerges and tilts left (-22deg) ───
-  if (heroBar) heroBar.classList.add('active');
+  // Second impact flash (at ~1050ms)
+  setTimeout(() => {
+    if (heroLightHalo) {
+      heroLightHalo.classList.remove('fade');
+      heroLightHalo.classList.add('pulse');
+      setTimeout(() => heroLightHalo.classList.add('fade'), 250);
+    }
+  }, 1050);
 
-  // Hold exclamation shape momentarily
-  await delay(700);
+  // Wait for 2 bounces to complete and settle
+  await delay(1500);
 
-  // ── Stage 3: Stroke morphs, UDAY appears in center ─────────
-  if (heroBar) heroBar.classList.add('morphing');
+  // ── Stage B: Upper vertical stroke falls and bends left ────────────────
+  if (heroBar) heroBar.classList.add('falling');
+  await delay(650);
+
+  // Light spread accompanying stroke bend
+  if (heroLightHalo) {
+    heroLightHalo.classList.remove('fade');
+    heroLightHalo.classList.add('pulse');
+    setTimeout(() => heroLightHalo.classList.add('fade'), 250);
+  }
+  if (heroBar) heroBar.classList.add('bend-left');
+
+  // Immediately before or as the first letters of UDAY appear, remove exclamation stroke and dot completely
   await delay(200);
-  if (heroIntroContainer) heroIntroContainer.classList.add('hidden');
-
-  // Form UDAY character-by-character
-  if (heroTitleWrap) heroTitleWrap.classList.add('visible');
-  const udaySpans = renderWordChars(heroTitle, 'UDAY', 'entering');
-  for (let i = 0; i < udaySpans.length; i++) {
-    await delay(75);
-    udaySpans[i].classList.remove('entering');
-    udaySpans[i].classList.add('settled');
+  if (heroBar) {
+    heroBar.classList.add('vanished');
+    heroBar.style.opacity = '0';
+    heroBar.style.visibility = 'hidden';
+  }
+  if (heroDot) {
+    heroDot.classList.add('vanished');
+    heroDot.style.opacity = '0';
+    heroDot.style.visibility = 'hidden';
   }
 
-  // Hold UDAY in center with dramatic silver typography
-  await delay(1200);
+  // ── Stage C: Form UD, then AY into clean, unobstructed UDAY ───────────
+  if (heroUd) heroUd.classList.add('visible');
 
-  // ── Stage 4: UDAY rapidly transforms into PORTFOLIO ────────
-  await morphWord(heroTitle, 'PORTFOLIO', 850);
-
-  // Hold PORTFOLIO in center
   await delay(350);
 
-  // ── Stage 5: PORTFOLIO descends slowly to lower position ────
+  // Light spread connecting into AY
+  if (heroLightHalo) {
+    heroLightHalo.classList.remove('fade');
+    heroLightHalo.classList.add('pulse');
+    setTimeout(() => heroLightHalo.classList.add('fade'), 250);
+  }
+
+  // Reveal AY
+  if (heroAy) heroAy.classList.add('visible');
+
+  // Complete word UDAY is formed, centered, and completely unobstructed!
+  await delay(1100);
+
+  // ── Stage D: Type PORTFOLIO at medium speed ────────────────────────────
+  if (heroIntroContainer) heroIntroContainer.classList.add('hidden');
+  if (heroTitleWrap) heroTitleWrap.classList.add('visible');
+
+  await typeWord(heroTitle, 'PORTFOLIO', 115);
+
+  // Hold PORTFOLIO in center
+  await delay(400);
+
+  // ── Stage E: PORTFOLIO descends slowly to lower position ───────────────
   if (heroTitleWrap) heroTitleWrap.classList.add('descended');
 
-  // As it descends, initiate the 5-step portrait particle assembly
+  // As it descends, initiate the 6-wave portrait particle assembly
   await delay(400);
 
   const pixelData = await extractPortraitPixels();
@@ -446,7 +461,6 @@ async function runHeroSequence() {
       new Particle(p.targetX, p.targetY, p.color, p.size, p.originX, p.originY)
     );
 
-    // Release particles in 6 waves so the inward streaming is clearly visible
     const total = particles.length;
     const waveCount = 6;
     const waveSize = Math.ceil(total / waveCount);
@@ -495,30 +509,113 @@ function initCapabilities() {
   const items = document.querySelectorAll('.capability-item');
   items.forEach(item => {
     const header = item.querySelector('.capability-header');
-    header.addEventListener('click', () => {
+    if (!header) return;
+
+    const toggleItem = () => {
       const isExpanded = item.classList.contains('expanded');
       // Collapse all
-      items.forEach(i => i.classList.remove('expanded'));
-      // Toggle clicked
+      items.forEach(i => {
+        i.classList.remove('expanded');
+        const h = i.querySelector('.capability-header');
+        if (h) h.setAttribute('aria-expanded', 'false');
+      });
+      // Toggle clicked item
       if (!isExpanded) {
         item.classList.add('expanded');
+        header.setAttribute('aria-expanded', 'true');
+      }
+    };
+
+    header.addEventListener('click', toggleItem);
+    header.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleItem();
       }
     });
   });
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SCROLL REVEAL
+// INTRO PROGRESSIVE SCROLL-TYPING REVEAL
+// ═══════════════════════════════════════════════════════════════
+function initIntroScrollReveal() {
+  const aboutSection = document.getElementById('about');
+  const textParagraphs = document.querySelectorAll('#about .about-text-line');
+  if (!aboutSection || !textParagraphs.length) return;
+
+  const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (isReduced) return;
+
+  // Split text into words wrapped in span.intro-type-word
+  textParagraphs.forEach(p => {
+    const temp = document.createElement('div');
+    temp.innerHTML = p.innerHTML;
+
+    function processNodes(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        const parts = text.split(/(\s+)/);
+        const frag = document.createDocumentFragment();
+        parts.forEach(part => {
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(part));
+          } else if (part.length > 0) {
+            const span = document.createElement('span');
+            span.className = 'intro-type-word';
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        });
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        Array.from(node.childNodes).forEach(processNodes);
+      }
+    }
+
+    Array.from(temp.childNodes).forEach(processNodes);
+    p.innerHTML = temp.innerHTML;
+  });
+
+  const wordSpans = document.querySelectorAll('#about .intro-type-word');
+  const totalWords = wordSpans.length;
+
+  function updateIntroReveal() {
+    const rect = aboutSection.getBoundingClientRect();
+    const windowH = window.innerHeight;
+
+    // Scroll progress as user scrolls into and through the Intro section
+    const startY = windowH * 0.85;
+    const endY = windowH * 0.15;
+    const progress = Math.min(1, Math.max(0, (startY - rect.top) / (startY - endY)));
+
+    // Progressive character/word typing at measured medium speed
+    const activeCount = Math.floor(progress * totalWords);
+
+    wordSpans.forEach((w, idx) => {
+      if (idx <= activeCount) {
+        w.classList.add('typed');
+      } else {
+        w.classList.remove('typed');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateIntroReveal, { passive: true });
+  updateIntroReveal();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCROLL REVEAL (Intersection Observer)
 // ═══════════════════════════════════════════════════════════════
 function initScrollReveal() {
-  // Add reveal class to elements
   const selectors = [
     '.about-left', '.about-right',
     '.capability-item',
     '.project-item',
     '.education-card',
     '.resume-content',
-    '.game-header', '.game-canvas',
+    '.game-top-bar', '.game-canvas-wrapper',
     '.contact-left', '.contact-right'
   ];
   
@@ -535,42 +632,100 @@ function initScrollReveal() {
       }
     });
   }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    threshold: 0.12,
+    rootMargin: '0px 0px -40px 0px'
   });
   
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
 // ═══════════════════════════════════════════════════════════════
-// NAVBAR SCROLL STATE & ACTIVE LINK
+// NAVIGATION: SLIDING ACTIVE UNDERLINE & SCROLL-DIRECTION LINE
 // ═══════════════════════════════════════════════════════════════
-function initNavbar() {
+function initNavigation() {
   const links = document.querySelectorAll('.nav-link[data-section]');
+  const activeLine = document.getElementById('nav-active-line');
+  const scrollLine = document.getElementById('nav-scroll-line');
+  const nav = document.getElementById('main-nav');
+  if (!links.length) return;
+
   const sections = [];
   links.forEach(link => {
     const sectionEl = document.getElementById(link.dataset.section);
-    if (sectionEl) sections.push({ el: sectionEl, link });
+    if (sectionEl) sections.push({ el: sectionEl, link, id: link.dataset.section });
   });
-  
-  window.addEventListener('scroll', () => {
-    // Scrolled state
-    if (window.scrollY > 80) {
-      mainNav.classList.add('scrolled');
-    } else {
-      mainNav.classList.remove('scrolled');
+
+  function setUnderline(activeLink) {
+    if (!activeLine || !activeLink) return;
+    const linkRect = activeLink.getBoundingClientRect();
+    const parentRect = activeLink.parentElement.getBoundingClientRect();
+    const left = linkRect.left - parentRect.left;
+    const width = linkRect.width;
+
+    activeLine.style.opacity = '1';
+    activeLine.style.transform = `translateX(${left}px)`;
+    activeLine.style.width = `${width}px`;
+  }
+
+  function updateNav() {
+    const scrollY = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docH > 0 ? Math.min(1, Math.max(0, scrollY / docH)) : 0;
+
+    // Thin scroll line expands smoothly down, retracts up
+    if (scrollLine) {
+      scrollLine.style.transform = `scaleX(${progress})`;
     }
-    
-    // Active section
+
+    // Header sticky backdrop blur
+    if (nav) {
+      if (scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+
+    // Determine current section in view
+    const triggerY = window.innerHeight * 0.35;
     let current = sections[0];
-    for (const s of sections) {
-      if (window.scrollY >= s.el.offsetTop - 200) {
+
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
+      const rect = s.el.getBoundingClientRect();
+      if (rect.top <= triggerY && rect.bottom > triggerY) {
+        current = s;
+        break;
+      } else if (rect.top <= triggerY) {
         current = s;
       }
     }
+
     links.forEach(l => l.classList.remove('active'));
-    if (current) current.link.classList.add('active');
+    if (current && current.link) {
+      current.link.classList.add('active');
+      setUnderline(current.link);
+    }
+  }
+
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      setUnderline(link);
+    });
   });
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  window.addEventListener('resize', () => {
+    const active = document.querySelector('.nav-link.active') || links[0];
+    if (active) setUnderline(active);
+  });
+
+  setTimeout(() => {
+    const active = document.querySelector('.nav-link.active') || links[0];
+    if (active) setUnderline(active);
+  }, 120);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -583,25 +738,31 @@ function initGame() {
   const startBtn = document.getElementById('game-start-btn');
   const scoreVal = document.getElementById('game-score-val');
   const livesDots = document.querySelectorAll('#game-lives-dots .dot');
+  const gameOverOverlay = document.getElementById('game-gameover-overlay');
+  const againBtn = document.getElementById('game-again-btn');
 
-  let gameRunning = false;
+  let gameMode = 'idle'; // 'idle' | 'playing' | 'gameover'
   let isPaused = false;
   let gameAnimFrame = null;
+  let lastTimestamp = 0;
 
   // Game constants & state
-  const BLOCK = 8;
-  let PADDLE_W = 84;
-  const PADDLE_H = 10;
-  const BALL_R = 5;
+  let BLOCK = 14;
+  let PADDLE_W = 100;
+  let PADDLE_H = 11;
+  let BALL_R = 7;
 
   let bricks = [];
+  let ghostBricks = [];
   let brickParticles = [];
-  let ball = { x: 0, y: 0, vx: 3.5, vy: -3.5 };
+  let ballTrail = [];
+  let ball = { x: 0, y: 0, vx: 2.2, vy: -2.4 };
   let paddle = { x: 0 };
   let score = 0;
   let lives = 3;
   let keys = { left: false, right: false };
-  let ballAttached = true;
+  let ballAttached = false;
+  let respawnTimer = null;
 
   // Pixel font for "HELLO WORLD" — each letter is a 5x7 grid
   const letters = {
@@ -636,13 +797,26 @@ function initGame() {
     gameCanvas.height = rect.height * dpr;
     gameCtx.resetTransform();
     gameCtx.scale(dpr, dpr);
-    PADDLE_W = rect.width < 500 ? 70 : 90;
+    
+    BLOCK = Math.max(8, Math.min(19, Math.floor(rect.width / 46)));
+    PADDLE_W = Math.max(76, Math.min(130, Math.floor(rect.width * 0.13)));
+    PADDLE_H = Math.max(9, Math.floor(BLOCK * 0.72));
+    BALL_R = Math.max(5, Math.floor(BLOCK * 0.4));
   }
 
-  function buildBricks() {
+  function buildBricks(keepGhost = false) {
     bricks = [];
+    if (!keepGhost) ghostBricks = [];
     brickParticles = [];
+    ballTrail = [];
     const w = gameCanvas.getBoundingClientRect().width;
+    const h = gameCanvas.getBoundingClientRect().height;
+    
+    BLOCK = Math.max(8, Math.min(19, Math.floor(w / 46)));
+    PADDLE_W = Math.max(76, Math.min(130, Math.floor(w * 0.13)));
+    PADDLE_H = Math.max(9, Math.floor(BLOCK * 0.72));
+    BALL_R = Math.max(5, Math.floor(BLOCK * 0.4));
+
     const text1 = 'HELLO';
     const text2 = 'WORLD';
 
@@ -665,8 +839,8 @@ function initGame() {
               bricks.push({
                 x: (cx + col) * BLOCK,
                 y: (baseY + row) * BLOCK,
-                w: BLOCK - 1,
-                h: BLOCK - 1,
+                w: BLOCK - 2,
+                h: BLOCK - 2,
                 alive: true,
                 color: color
               });
@@ -676,33 +850,43 @@ function initGame() {
       }
     }
 
+    const totalLinesH = (charH * 2 + 2) * BLOCK;
+    const startRow = Math.max(2, Math.floor((h * 0.36 - totalLinesH / 2) / BLOCK));
+    addLine(text1, startRow, '#ffffff');
+    addLine(text2, startRow + charH + 2, '#ffffff');
+
+    paddle.x = w / 2 - PADDLE_W / 2;
+  }
+
+  function resetIdleBall() {
+    const w = gameCanvas.getBoundingClientRect().width;
     const h = gameCanvas.getBoundingClientRect().height;
-    addLine(text1, Math.floor(h / BLOCK * 0.16), '#f4f4f6');
-    addLine(text2, Math.floor(h / BLOCK * 0.16) + charH + 2, '#cdc6b6');
-
-    score = 0;
-    lives = 3;
-    updateScoreUI();
-    updateLivesUI();
-
-    const cw = gameCanvas.getBoundingClientRect().width;
-    const ch = gameCanvas.getBoundingClientRect().height;
-    paddle.x = cw / 2 - PADDLE_W / 2;
+    ball.x = w / 2;
+    ball.y = h * 0.55;
+    ball.vx = 1.6 * (Math.random() > 0.5 ? 1 : -1);
+    ball.vy = -1.6;
     ballAttached = false;
-    ball.x = cw / 2;
-    ball.y = ch - 50;
-    ball.vx = 3.5 * (Math.random() > 0.5 ? 1 : -1);
-    ball.vy = -3.5;
+  }
+
+  function resetPlayingBall() {
+    const w = gameCanvas.getBoundingClientRect().width;
+    const h = gameCanvas.getBoundingClientRect().height;
+    ball.x = paddle.x + PADDLE_W / 2;
+    ball.y = h - 45;
+    // ~15% faster active gameplay speed, smooth and controlled
+    ball.vx = 2.75 * (Math.random() > 0.5 ? 1 : -1);
+    ball.vy = -3.0;
+    ballAttached = false;
   }
 
   function spawnBrickExplosion(b) {
-    const count = 5;
+    const count = 6;
     for (let i = 0; i < count; i++) {
       brickParticles.push({
         x: b.x + b.w / 2,
         y: b.y + b.h / 2,
-        vx: (Math.random() - 0.5) * 4,
-        vy: (Math.random() - 0.5) * 4,
+        vx: (Math.random() - 0.5) * 3.5,
+        vy: (Math.random() - 0.5) * 3.5,
         size: Math.random() * 2 + 1.5,
         alpha: 1,
         color: b.color
@@ -716,18 +900,26 @@ function initGame() {
 
     gameCtx.clearRect(0, 0, w, h);
 
-    // Subtle starry background in game canvas
+    // Deep black canvas background
     gameCtx.fillStyle = '#08080a';
     gameCtx.fillRect(0, 0, w, h);
 
-    // Bricks
+    // Subtle ghost traces for destroyed blocks (non-collidable)
+    for (const g of ghostBricks) {
+      gameCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      gameCtx.fillRect(g.x, g.y, g.w, g.h);
+      gameCtx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      gameCtx.strokeRect(g.x, g.y, g.w, g.h);
+    }
+
+    // Active Bricks
     for (const b of bricks) {
       if (!b.alive) continue;
       gameCtx.fillStyle = b.color;
       gameCtx.fillRect(b.x, b.y, b.w, b.h);
     }
 
-    // Explosion particles
+    // Brick explosion particles
     for (let i = brickParticles.length - 1; i >= 0; i--) {
       const p = brickParticles[i];
       gameCtx.globalAlpha = p.alpha;
@@ -739,13 +931,23 @@ function initGame() {
     // Paddle
     gameCtx.fillStyle = '#f4f4f6';
     gameCtx.beginPath();
-    gameCtx.roundRect(paddle.x, h - 28, PADDLE_W, PADDLE_H, [3, 3, 3, 3]);
+    gameCtx.roundRect(paddle.x, h - 30, PADDLE_W, PADDLE_H, [3, 3, 3, 3]);
     gameCtx.fill();
+
+    // Subtle translucent ball trail afterimages
+    for (let i = 0; i < ballTrail.length; i++) {
+      const t = ballTrail[i];
+      const trailAlpha = (1 - i / ballTrail.length) * 0.22;
+      gameCtx.fillStyle = `rgba(255, 255, 255, ${trailAlpha.toFixed(3)})`;
+      gameCtx.beginPath();
+      gameCtx.arc(t.x, t.y, BALL_R * 0.85, 0, Math.PI * 2);
+      gameCtx.fill();
+    }
 
     // Ball
     gameCtx.fillStyle = '#ffffff';
-    gameCtx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-    gameCtx.shadowBlur = 8;
+    gameCtx.shadowColor = 'rgba(255, 255, 255, 0.7)';
+    gameCtx.shadowBlur = 10;
     gameCtx.beginPath();
     gameCtx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
     gameCtx.fill();
@@ -753,26 +955,26 @@ function initGame() {
 
     // Paused overlay
     if (isPaused) {
-      gameCtx.fillStyle = 'rgba(5, 5, 5, 0.7)';
+      gameCtx.fillStyle = 'rgba(5, 5, 5, 0.75)';
       gameCtx.fillRect(0, 0, w, h);
-      gameCtx.font = '600 16px "Space Grotesk", sans-serif';
+      gameCtx.font = '600 18px "Space Grotesk", sans-serif';
       gameCtx.fillStyle = '#f4f4f6';
       gameCtx.textAlign = 'center';
       gameCtx.fillText('PAUSED', w / 2, h / 2 - 10);
-      gameCtx.font = '400 12px "Inter", sans-serif';
+      gameCtx.font = '400 13px "Inter", sans-serif';
       gameCtx.fillStyle = '#8e8e93';
-      gameCtx.fillText('Press SPACE to resume', w / 2, h / 2 + 15);
+      gameCtx.fillText('Press SPACE to resume', w / 2, h / 2 + 16);
     }
   }
 
-  function updateGame() {
+  function updateGame(dt) {
     if (isPaused) return;
 
     const w = gameCanvas.getBoundingClientRect().width;
     const h = gameCanvas.getBoundingClientRect().height;
 
     // Keyboard paddle control
-    const paddleSpeed = 8;
+    const paddleSpeed = 7 * dt;
     if (keys.left) paddle.x -= paddleSpeed;
     if (keys.right) paddle.x += paddleSpeed;
     paddle.x = Math.max(0, Math.min(w - PADDLE_W, paddle.x));
@@ -780,10 +982,10 @@ function initGame() {
     // Update brick particles
     for (let i = brickParticles.length - 1; i >= 0; i--) {
       const p = brickParticles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.15; // Gravity
-      p.alpha -= 0.04;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 0.12 * dt; // Gravity
+      p.alpha -= 0.035 * dt;
       if (p.alpha <= 0) {
         brickParticles.splice(i, 1);
       }
@@ -791,13 +993,17 @@ function initGame() {
 
     if (ballAttached) {
       ball.x = paddle.x + PADDLE_W / 2;
-      ball.y = h - 38;
+      ball.y = h - 42;
       return;
     }
 
-    // Ball movement
-    ball.x += ball.vx;
-    ball.y += ball.vy;
+    // Record ball trail
+    ballTrail.unshift({ x: ball.x, y: ball.y });
+    if (ballTrail.length > 5) ballTrail.pop();
+
+    // Ball movement (delta-time based for rock-solid consistent speed)
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
 
     // Wall bounce
     if (ball.x - BALL_R <= 0) {
@@ -814,39 +1020,49 @@ function initGame() {
 
     // Paddle bounce
     if (
-      ball.y + BALL_R >= h - 28 &&
+      ball.y + BALL_R >= h - 30 &&
       ball.y - BALL_R <= h - 18 &&
       ball.x >= paddle.x &&
       ball.x <= paddle.x + PADDLE_W
     ) {
       ball.vy = -Math.abs(ball.vy);
-      // Angle deflection based on hit point
+      // Angle deflection based on hit position
       const hitPos = (ball.x - paddle.x) / PADDLE_W;
-      ball.vx = (hitPos - 0.5) * 8;
+      ball.vx = (hitPos - 0.5) * 6.2;
     }
 
-    // Ball fell off screen
-    if (ball.y > h + 20) {
-      lives--;
-      updateLivesUI();
+    // Ball fell below bottom edge
+    if (ball.y > h + 25) {
+      if (gameMode === 'idle') {
+        // IDLE PREVIEW: Do NOT lose life or score; respawn smoothly after 0.8s
+        if (!respawnTimer) {
+          respawnTimer = setTimeout(() => {
+            resetIdleBall();
+            respawnTimer = null;
+          }, 800);
+        }
+      } else if (gameMode === 'playing') {
+        lives--;
+        updateLivesUI();
 
-      if (lives > 0) {
-        // Respawn ball
-        ballAttached = true;
-        setTimeout(() => {
-          ballAttached = false;
-          ball.vx = 3.5 * (Math.random() > 0.5 ? 1 : -1);
-          ball.vy = -3.5;
-        }, 700);
-      } else {
-        // Game Over
-        gameRunning = false;
-        if (startBtn) startBtn.textContent = 'GAME OVER — PLAY AGAIN';
-        return;
+        if (lives > 0) {
+          ballAttached = true;
+          setTimeout(() => {
+            ballAttached = false;
+            ball.vx = 2.75 * (Math.random() > 0.5 ? 1 : -1);
+            ball.vy = -3.0;
+          }, 700);
+        } else {
+          // Game Over State
+          gameMode = 'gameover';
+          if (gameOverOverlay) gameOverOverlay.classList.add('active');
+          if (startBtn) startBtn.textContent = 'GAME OVER';
+          return;
+        }
       }
     }
 
-    // Brick collision
+    // Brick collision (only during active play or preview bounce)
     for (const b of bricks) {
       if (!b.alive) continue;
       if (
@@ -856,27 +1072,34 @@ function initGame() {
         ball.y - BALL_R < b.y + b.h
       ) {
         b.alive = false;
+        // Preserve ghost trace at destroyed block location
+        ghostBricks.push({ x: b.x, y: b.y, w: b.w, h: b.h });
         spawnBrickExplosion(b);
         ball.vy *= -1;
-        score += 10;
-        updateScoreUI();
+
+        if (gameMode === 'playing') {
+          score += 10;
+          updateScoreUI();
+        }
         break;
       }
     }
 
-    // Win check
-    if (bricks.length > 0 && bricks.every(b => !b.alive)) {
-      gameRunning = false;
+    // Win condition check
+    if (gameMode === 'playing' && bricks.length > 0 && bricks.every(b => !b.alive)) {
+      gameMode = 'idle';
       if (startBtn) startBtn.textContent = 'YOU WIN! PLAY AGAIN';
     }
   }
 
-  function gameLoop() {
-    if (!gameRunning) {
-      drawGame();
-      return;
+  function gameLoop(timestamp) {
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    const dt = Math.min((timestamp - lastTimestamp) / (1000 / 60), 2.0);
+    lastTimestamp = timestamp;
+
+    if (gameMode !== 'gameover') {
+      updateGame(dt);
     }
-    updateGame();
     drawGame();
     gameAnimFrame = requestAnimationFrame(gameLoop);
   }
@@ -888,7 +1111,7 @@ function initGame() {
     } else if (e.key === 'ArrowRight' || e.code === 'KeyD') {
       keys.right = true;
     } else if (e.code === 'Space') {
-      if (gameRunning) {
+      if (gameMode === 'playing') {
         e.preventDefault();
         isPaused = !isPaused;
         if (startBtn) startBtn.textContent = isPaused ? 'RESUME' : 'PLAYING...';
@@ -904,14 +1127,13 @@ function initGame() {
     }
   });
 
-  // Mouse control for paddle
+  // Mouse & Touch paddle controls
   gameCanvas.addEventListener('mousemove', (e) => {
     const rect = gameCanvas.getBoundingClientRect();
     paddle.x = e.clientX - rect.left - PADDLE_W / 2;
     paddle.x = Math.max(0, Math.min(rect.width - PADDLE_W, paddle.x));
   });
 
-  // Touch control for paddle
   gameCanvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
     const rect = gameCanvas.getBoundingClientRect();
@@ -919,32 +1141,43 @@ function initGame() {
     paddle.x = Math.max(0, Math.min(rect.width - PADDLE_W, paddle.x));
   }, { passive: false });
 
-  if (startBtn) {
-    startBtn.addEventListener('click', () => {
-      if (isPaused) {
-        isPaused = false;
-        startBtn.textContent = 'PLAYING...';
-        return;
-      }
-      resizeGame();
-      buildBricks();
-      gameRunning = true;
+  // Play button click: start active gameplay
+  function startPlaying() {
+    if (isPaused) {
       isPaused = false;
-      startBtn.textContent = 'PLAYING...';
-      if (gameAnimFrame) cancelAnimationFrame(gameAnimFrame);
-      gameLoop();
-    });
+      if (startBtn) startBtn.textContent = 'PLAYING...';
+      return;
+    }
+    if (gameOverOverlay) gameOverOverlay.classList.remove('active');
+    gameMode = 'playing';
+    isPaused = false;
+    score = 0;
+    lives = 3;
+    updateScoreUI();
+    updateLivesUI();
+    buildBricks(false);
+    resetPlayingBall();
+    if (startBtn) startBtn.textContent = 'PLAYING...';
+  }
+
+  if (startBtn) {
+    startBtn.addEventListener('click', startPlaying);
+  }
+
+  if (againBtn) {
+    againBtn.addEventListener('click', startPlaying);
   }
 
   window.addEventListener('resize', () => {
     resizeGame();
-    if (!gameRunning) drawGame();
   });
 
-  // Initial draw
+  // Start Idle Preview on initial load
   resizeGame();
-  buildBricks();
-  drawGame();
+  buildBricks(false);
+  resetIdleBall();
+  gameMode = 'idle';
+  gameAnimFrame = requestAnimationFrame(gameLoop);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -976,9 +1209,10 @@ function init() {
   initAmbient();
   render();
   runHeroSequence();
+  initIntroScrollReveal();
   initCapabilities();
   initScrollReveal();
-  initNavbar();
+  initNavigation();
   initSmoothScroll();
   initGame();
 }
