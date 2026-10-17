@@ -306,6 +306,8 @@ function drawAmbient() {
 // ═══════════════════════════════════════════════════════════════
 // TYPOGRAPHY SEQUENCER
 // ═══════════════════════════════════════════════════════════════
+// TYPOGRAPHY SEQUENCER & KINETIC MORPH
+// ═══════════════════════════════════════════════════════════════
 const GLYPH_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 function renderWordChars(container, word, initialClass = 'entering') {
@@ -315,36 +317,33 @@ function renderWordChars(container, word, initialClass = 'entering') {
     const span = document.createElement('span');
     span.className = `char ${initialClass}`;
     span.textContent = word[i];
+    span.dataset.char = word[i];
     container.appendChild(span);
     spans.push(span);
   }
   return spans;
 }
 
-// Medium-speed character-by-character typing animation into target word
-function typeWord(container, targetWord, charDelayMs = 115) {
+// Scramble an individual character span from its current character into targetChar
+function scrambleCharTo(span, targetChar, durationMs = 170) {
   return new Promise((resolve) => {
-    container.innerHTML = '';
-    const spans = [];
-    for (let i = 0; i < targetWord.length; i++) {
-      const span = document.createElement('span');
-      span.className = 'char entering';
-      span.textContent = targetWord[i];
-      container.appendChild(span);
-      spans.push(span);
-    }
+    const startTime = performance.now();
+    span.classList.add('scrambling');
+    span.classList.remove('settled');
 
-    let idx = 0;
-    const timer = setInterval(() => {
-      if (idx < spans.length) {
-        spans[idx].classList.remove('entering');
-        spans[idx].classList.add('settled');
-        idx++;
-      } else {
-        clearInterval(timer);
+    const interval = setInterval(() => {
+      const elapsed = performance.now() - startTime;
+      if (elapsed >= durationMs) {
+        clearInterval(interval);
+        span.textContent = targetChar;
+        span.dataset.char = targetChar;
+        span.classList.remove('scrambling');
+        span.classList.add('settled');
         resolve();
+      } else {
+        span.textContent = GLYPH_CHARS[Math.floor(Math.random() * GLYPH_CHARS.length)];
       }
-    }, charDelayMs);
+    }, 32);
   });
 }
 
@@ -373,11 +372,24 @@ async function runHeroSequence() {
     return;
   }
 
-  // ── Stage A: Dot falls from above and bounces twice with light spread ──
+  // Pre-populate UDAY in heroTitle with initial hidden/entering state
+  heroTitle.innerHTML = '';
+  const initialLetters = ['U', 'D', 'A', 'Y'];
+  const charSpans = [];
+  for (let i = 0; i < initialLetters.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'char entering';
+    span.textContent = initialLetters[i];
+    span.dataset.char = initialLetters[i];
+    heroTitle.appendChild(span);
+    charSpans.push(span);
+  }
+
+  // ── Stage A: Dot falls from above and bounces twice with softened light spread ──
   await delay(250);
   if (heroDot) heroDot.classList.add('falling');
 
-  // First impact flash (at ~520ms)
+  // First impact flash (at ~520ms) - softened halo
   setTimeout(() => {
     if (heroLightHalo) {
       heroLightHalo.classList.add('pulse');
@@ -385,7 +397,7 @@ async function runHeroSequence() {
     }
   }, 520);
 
-  // Second impact flash (at ~1050ms)
+  // Second impact flash (at ~1050ms) - softened halo
   setTimeout(() => {
     if (heroLightHalo) {
       heroLightHalo.classList.remove('fade');
@@ -422,12 +434,18 @@ async function runHeroSequence() {
     heroDot.style.visibility = 'hidden';
   }
 
-  // ── Stage C: Form UD, then AY into clean, unobstructed UDAY ───────────
-  if (heroUd) heroUd.classList.add('visible');
+  // ── Stage C: Form UD, then AY into clean, bold UDAY ────────────────────
+  if (heroTitleWrap) heroTitleWrap.classList.add('visible');
+
+  // Reveal UD
+  charSpans[0].classList.remove('entering');
+  charSpans[0].classList.add('settled');
+  charSpans[1].classList.remove('entering');
+  charSpans[1].classList.add('settled');
 
   await delay(350);
 
-  // Light spread connecting into AY
+  // Soft light pulse connecting into AY
   if (heroLightHalo) {
     heroLightHalo.classList.remove('fade');
     heroLightHalo.classList.add('pulse');
@@ -435,21 +453,53 @@ async function runHeroSequence() {
   }
 
   // Reveal AY
-  if (heroAy) heroAy.classList.add('visible');
+  charSpans[2].classList.remove('entering');
+  charSpans[2].classList.add('settled');
+  charSpans[3].classList.remove('entering');
+  charSpans[3].classList.add('settled');
 
-  // Complete word UDAY is formed, centered, and completely unobstructed!
-  await delay(1100);
+  // Complete word UDAY is formed, centered, bold and completely unobstructed!
+  // Keep the four existing letters visible for a deliberate pause
+  await delay(750);
 
-  // ── Stage D: Type PORTFOLIO at medium speed ────────────────────────────
-  if (heroIntroContainer) heroIntroContainer.classList.add('hidden');
-  if (heroTitleWrap) heroTitleWrap.classList.add('visible');
+  // ── Stage D1: Kinetic character transformation UDAY -> PORT ───────────
+  // Mapping: U -> P, D -> O, A -> R, Y -> T
+  const morphPairs = [
+    { span: charSpans[0], target: 'P', stagger: 0 },
+    { span: charSpans[1], target: 'O', stagger: 70 },
+    { span: charSpans[2], target: 'R', stagger: 140 },
+    { span: charSpans[3], target: 'T', stagger: 210 },
+  ];
 
-  await typeWord(heroTitle, 'PORTFOLIO', 115);
+  await Promise.all(
+    morphPairs.map(({ span, target, stagger }) =>
+      new Promise(res => {
+        setTimeout(() => {
+          scrambleCharTo(span, target, 170).then(res);
+        }, stagger);
+      })
+    )
+  );
 
-  // Hold PORTFOLIO in center
-  await delay(400);
+  // ── Stage D2: Sequentially reveal remaining letters FOLIO ──────────────
+  await delay(120);
 
-  // ── Stage E: PORTFOLIO descends slowly to lower position ───────────────
+  const remainingLetters = ['F', 'O', 'L', 'I', 'O'];
+  for (const ch of remainingLetters) {
+    const span = document.createElement('span');
+    span.className = 'char entering';
+    span.textContent = ch;
+    span.dataset.char = ch;
+    heroTitle.appendChild(span);
+    // Force reflow for smooth kinetic entry transition
+    void span.offsetWidth;
+    span.classList.remove('entering');
+    span.classList.add('settled');
+    await delay(115); // Measured medium speed
+  }
+
+  // ── Stage E: Complete PORTFOLIO settles and descends ───────────────────
+  await delay(450);
   if (heroTitleWrap) heroTitleWrap.classList.add('descended');
 
   // As it descends, initiate the 6-wave portrait particle assembly
@@ -609,8 +659,15 @@ function initIntroScrollReveal() {
 // SCROLL REVEAL (Intersection Observer)
 // ═══════════════════════════════════════════════════════════════
 function initScrollReveal() {
-  const selectors = [
-    '.about-left', '.about-right',
+  const headingSelectors = [
+    '.about-left',
+    '.capabilities-header',
+    '.projects-header-container',
+    '.education-header'
+  ];
+
+  const contentSelectors = [
+    '.about-right',
     '.capability-item',
     '.project-item',
     '.education-card',
@@ -618,24 +675,35 @@ function initScrollReveal() {
     '.game-top-bar', '.game-canvas-wrapper',
     '.contact-left', '.contact-right'
   ];
-  
-  selectors.forEach(sel => {
+
+  [...headingSelectors, ...contentSelectors].forEach(sel => {
     document.querySelectorAll(sel).forEach(el => {
       el.classList.add('reveal');
     });
   });
-  
-  const observer = new IntersectionObserver((entries) => {
+
+  // Assign stagger index to capability items
+  document.querySelectorAll('.capabilities-list .capability-item').forEach((item, idx) => {
+    item.style.setProperty('--reveal-idx', idx);
+  });
+
+  // Assign stagger index to education cards
+  document.querySelectorAll('.education-grid .education-card').forEach((card, idx) => {
+    card.style.setProperty('--reveal-idx', idx);
+  });
+
+  const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('revealed');
+        obs.unobserve(entry.target);
       }
     });
   }, {
     threshold: 0.12,
     rootMargin: '0px 0px -40px 0px'
   });
-  
+
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
